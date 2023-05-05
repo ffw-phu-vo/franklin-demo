@@ -15,9 +15,6 @@ export default function decorate(block) {
         slidesToShow: 3,
         slidesToScroll: 3,
       });
-      console.log("test");
-    } else {
-      console.log("test2");
     }
   }
 }
