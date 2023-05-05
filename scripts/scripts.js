@@ -15,6 +15,16 @@ import {
 
 const LCP_BLOCKS = []; // add your LCP blocks to the list
 
+export function createTag(name, attrs) {
+  const el = document.createElement(name);
+  if (typeof attrs === 'object') {
+    for (const [key, value] of Object.entries(attrs)) {
+      el.setAttribute(key, value);
+    }
+  }
+  return el;
+}
+
 /**
  * Builds hero block and prepends to main in a new section.
  * @param {Element} main The container element
