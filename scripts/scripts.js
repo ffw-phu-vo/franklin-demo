@@ -26,15 +26,17 @@ export function createTag(name, attrs) {
 }
 
 export function loadScript(url, callback, type) {
-  const head = document.querySelector("head");
-  const script = document.createElement("script");
-  script.setAttribute("src", url);
-  if (type) {
-    script.setAttribute("type", type);
+  if (!document.querySelector(`head > script[src="${url}"]`)) {
+    const script = document.createElement("script");
+    script.setAttribute("src", url);
+    if (type) {
+      script.setAttribute("type", type);
+    }
+    if (typeof callback === "function") {
+      script.onload = callback;
+    }
+    document.head.appendChild(script);
   }
-  head.append(script);
-  script.onload = callback;
-  return script;
 }
 
 // -------- End Custom Functions --------
