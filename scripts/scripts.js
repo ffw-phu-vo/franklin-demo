@@ -125,7 +125,14 @@ export function addFavIcon(href) {
  */
 async function loadLazy(doc) {
   loadScript("/libraries/jquery/jquery-3.6.4.min.js");
-  loadScript("/libraries/jquery/jquery-migrate-3.4.0.min.js");
+  let jqueryLoad = setInterval(jqueryLoadFrame, 300);
+  function jqueryLoadFrame() {
+    if (window.jQuery) {
+      clearInterval(jqueryLoad);
+      loadScript("/libraries/jquery/jquery-migrate-3.4.0.min.js");
+    }
+  }
+
   const main = doc.querySelector("main");
   await loadBlocks(main);
 
