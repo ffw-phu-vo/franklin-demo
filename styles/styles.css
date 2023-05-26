@@ -168,7 +168,7 @@ a.button.secondary, button.secondary {
   color: var(--text-color)
 }
 
-main input {
+/*main input {
   font-size: 1.25rem;
   width: 100%;
   max-width: 50rem;
@@ -184,7 +184,7 @@ main input {
 
 main input:hover {
   border: 1px solid var(--text-color);
-}
+}*/
 
 main blockquote {
   font-style: italic;
@@ -240,4 +240,8 @@ main .section {
 /* section metadata */
 main .section.highlight {
   background-color: var(--highlight-background-color);
+}
+
+.hidden {
+  display: none;
 }
