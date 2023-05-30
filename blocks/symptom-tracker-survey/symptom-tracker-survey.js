@@ -8,7 +8,7 @@ import { handlePdfMS } from "./symptom-tracker-survey-ms.js";
  * @param {HTMLFormElement} form
  * @param {Number} stepIndex
  */
-function renderCheckbox(ul, form, stepIndex) {
+export function renderCheckbox(ul, form, stepIndex) {
   [...ul.children].forEach((item, index) => {
     const id = `field-${index}-step-${stepIndex}`;
     const name = `field_${index}_step_${stepIndex}`;
@@ -22,13 +22,13 @@ function renderCheckbox(ul, form, stepIndex) {
 }
 
 /**
- * Convert list item to checkbox form element.
+ * Convert list item to radio form element.
  *
- * @param {HTMLLIElement[]} list
+ * @param {HTMLLIElement[]} ol
  * @param {HTMLFormElement} form
  * @param {Number} stepIndex
  */
-function renderRadio(ol, form, stepIndex) {
+export function renderRadio(ol, form, stepIndex) {
   [...ol.children].forEach((item, index) => {
     const id = `field-${index}-step-${stepIndex}`;
     const name = `field_step_${stepIndex}`;
@@ -79,9 +79,14 @@ function renderRow(row, index) {
   }
 }
 
+/**
+ * Validate each step form.
+ *
+ * @param {HTMLElement} form
+ * @return {Object} status
+ */
 function validateStepForm(form) {
   const status = form.getAttribute("data-validate-status");
-  console.log(status);
   if (status == 1) {
     return {
       status: true,
@@ -96,16 +101,18 @@ function validateStepForm(form) {
 
 export default async function decorate(block) {
   // const placeholders = await fetchPlaceholders();
+  const indication = block.children[0].textContent.trim();
+  block.removeChild(block.children[0]);
   let formData = {
     step0: [],
     step1: [],
     step2: "",
     step3: "",
+    indication: indication,
   };
 
   const totalSteps = block.children.length;
   let currentStepIndex = 0;
-  console.log(totalSteps);
   const steps = document.createElement("div");
   steps.classList.add("symptom-tracker-survey__steps");
 
@@ -154,7 +161,6 @@ export default async function decorate(block) {
         data.push(input.value);
       });
       formData[step] = data;
-      // console.log(formData);
     });
   }
 
@@ -209,7 +215,6 @@ export default async function decorate(block) {
       currentStep.querySelector(
         ".message"
       ).innerHTML = `<span>${isValidate.message}</span>`;
-      // console.log(isValidate);
     }
   });
 

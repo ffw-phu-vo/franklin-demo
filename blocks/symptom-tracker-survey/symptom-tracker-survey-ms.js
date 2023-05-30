@@ -1,10 +1,5 @@
-function arrToMultipleParts(arr, num) {
-  let result = [];
-  for (var i = 0; i < arr.length; i += num) {
-    result.push(arr.slice(i, i + num));
-  }
-  return result;
-}
+import { generateDownloadPdf } from "../../scripts/helpers/hander-ms.js";
+import { arrToParts } from "../../scripts/helpers/format.js";
 
 function covertStepRc(arrStep, step) {
   let mkRc = "";
@@ -45,49 +40,6 @@ function covertStepRc(arrStep, step) {
   return mkRc;
 }
 
-function sendData(payload, pdflink, requestUrl, token) {
-  const xhttp = new XMLHttpRequest();
-  xhttp.open("POST", requestUrl, true);
-  xhttp.setRequestHeader("Content-Type", "application/json");
-  xhttp.setRequestHeader("x-config-token", token);
-  xhttp.onreadystatechange = () => {
-    if (xhttp.readyState === 4 && xhttp.status === 200) {
-      // eslint-disable-next-line no-console
-      console.log("Success, PDF generated");
-      const res = xhttp.responseText;
-      const obj = JSON.parse(res);
-      pdflink.location = obj.data[0].details[0].downloadUrl;
-    }
-    if (xhttp.readyState !== 4 && xhttp.status !== 200) {
-      // eslint-disable-next-line no-console
-      console.error("Something went wrong! Please try again.");
-    }
-  };
-  xhttp.send(JSON.stringify(payload));
-}
-
-async function generateDownloadPdf(payload, requestUrl, token) {
-  let pdflink = "";
-  pdflink = window.open("", "_blank");
-  pdflink.document.write("Loading preview...");
-  fetch(requestUrl, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json; charset=utf-8",
-      "X-Config-Token": token,
-    },
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      payload.csrfToken = data.data.csrfToken;
-      sendData(payload, pdflink, requestUrl, token);
-    })
-    .catch((error) => {
-      // eslint-disable-next-line no-console
-      console.error("Something went wrong with the get request:", error);
-    });
-}
-
 export async function handlePdfMS(formData) {
   const basePath = "https://xeljanzcom.test.pfizerstatic.io/";
   const token = "xeljanz_uat-DDG-RA-pdf-config-download";
@@ -104,12 +56,12 @@ export async function handlePdfMS(formData) {
 
   let step1_rc = "";
   if (formData.step0.length > 0) {
-    const step1 = arrToMultipleParts(formData.step0, 3);
+    const step1 = arrToParts(formData.step0, 3);
     step1_rc = covertStepRc(step1, 1);
   }
   let step2_rc = "";
   if (formData.step1.length > 0) {
-    const step2 = arrToMultipleParts(formData.step1, 3);
+    const step2 = arrToParts(formData.step1, 3);
     step2_rc = covertStepRc(step2, 2);
   }
 
@@ -117,7 +69,7 @@ export async function handlePdfMS(formData) {
     csrfToken: "",
     base_path: basePath,
     date_created: date,
-    indication: "ra",
+    indication: formData.indication,
     type: "download",
     step3: formData.step2,
     step4: formData.step3,
